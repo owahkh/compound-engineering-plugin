@@ -5,14 +5,23 @@ All notable changes to the `@every-env/compound-plugin` CLI tool will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.11.0] - 2026-02-26
+## [0.11.0] - 2026-03-01
 
 ### Added
 
-- **Windsurf target** — `--to windsurf` converts plugins to Windsurf format. Claude agents become Windsurf skills (`skills/{name}/SKILL.md`), commands become flat workflows (`global_workflows/{name}.md` for global scope, `workflows/{name}.md` for workspace), and pass-through skills copy unchanged. MCP servers write to `mcp_config.json` (machine-readable, merged with existing config).
+- **OpenClaw target** — `--to openclaw` converts plugins to OpenClaw format. Agents become `.md` files, commands become `.md` files, pass-through skills copy unchanged, and MCP servers are written to `openclaw-extension.json`. Output goes to `~/.openclaw/extensions/<plugin-name>/` by default. Use `--openclaw-home` to override. ([#217](https://github.com/EveryInc/compound-engineering-plugin/pull/217)) — thanks [@TrendpilotAI](https://github.com/TrendpilotAI)!
+- **Qwen Code target** — `--to qwen` converts plugins to Qwen Code extension format. Agents become `.yaml` files with Qwen-compatible fields, commands become `.md` files, MCP servers write to `qwen-extension.json`, and a `QWEN.md` context file is generated. Output goes to `~/.qwen/extensions/<plugin-name>/` by default. Use `--qwen-home` to override. ([#220](https://github.com/EveryInc/compound-engineering-plugin/pull/220)) — thanks [@rlam3](https://github.com/rlam3)!
+- **Windsurf target** — `--to windsurf` converts plugins to Windsurf format. Claude agents become Windsurf skills (`skills/{name}/SKILL.md`), commands become flat workflows (`global_workflows/{name}.md` for global scope, `workflows/{name}.md` for workspace), and pass-through skills copy unchanged. MCP servers write to `mcp_config.json` (machine-readable, merged with existing config). ([#202](https://github.com/EveryInc/compound-engineering-plugin/pull/202)) — thanks [@rburnham52](https://github.com/rburnham52)!
 - **Global scope support** — New `--scope global|workspace` flag (generic, Windsurf as first adopter). `--to windsurf` defaults to global scope (`~/.codeium/windsurf/`), making installed skills, workflows, and MCP servers available across all projects. Use `--scope workspace` for project-level `.windsurf/` output.
 - **`mcp_config.json` integration** — Windsurf converter writes proper machine-readable MCP config supporting stdio, Streamable HTTP, and SSE transports. Merges with existing config (user entries preserved, plugin entries take precedence). Written with `0o600` permissions.
 - **Shared utilities** — Extracted `resolveTargetOutputRoot` to `src/utils/resolve-output.ts` and `hasPotentialSecrets` to `src/utils/secrets.ts` to eliminate duplication.
+
+### Fixed
+
+- **OpenClaw code injection** — `generateEntryPoint` now uses `JSON.stringify()` for all string interpolation (was escaping only `"`, leaving `\n`/`\\` unguarded).
+- **Qwen `plugin.manifest.name`** — context file header was `# undefined` due to using `plugin.name` (which doesn't exist on `ClaudePlugin`); fixed to `plugin.manifest.name`.
+- **Qwen remote MCP servers** — curl fallback removed; HTTP/SSE servers are now skipped with a warning (Qwen only supports stdio transport).
+- **`--openclaw-home` / `--qwen-home` CLI flags** — wired through to `resolveTargetOutputRoot` so custom home directories are respected.
 
 ---
 
