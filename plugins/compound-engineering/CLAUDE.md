@@ -79,7 +79,7 @@ When adding or modifying skills, verify compliance with skill-creator spec:
 ### Cross-Platform User Interaction
 
 - [ ] When a skill needs to ask the user a question, instruct use of the platform's blocking question tool and name the known equivalents (`AskUserQuestion` in Claude Code, `request_user_input` in Codex, `ask_user` in Gemini)
-- [ ] Include a fallback for environments without a question tool (e.g., present numbered options and end the turn)
+- [ ] Include a fallback for environments without a question tool (e.g., present numbered options and wait for the user's reply before proceeding)
 
 ### Quick Validation Command
 
